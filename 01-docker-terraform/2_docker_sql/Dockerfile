@@ -9,3 +9,4 @@ COPY pipeline.py pipeline.py
 
 ENTRYPOINT [ "python", "pipeline.py" ]
 
+
