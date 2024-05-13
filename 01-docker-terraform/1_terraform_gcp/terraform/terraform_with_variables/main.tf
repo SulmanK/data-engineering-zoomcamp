@@ -14,7 +14,7 @@ provider "google" {
 }
 
 
-resource "google_storage_bucket" "demo-bucket" {
+resource "google_storage_bucket" "alien-trainer-423214-r4-bucket" {
   name          = var.gcs_bucket_name
   location      = var.location
   force_destroy = true
