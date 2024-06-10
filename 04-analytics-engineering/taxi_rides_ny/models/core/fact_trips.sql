@@ -1,9 +1,8 @@
-{{
-    config(
-        materialized = 'table'
-    )
-}}
+{{ config(
+    materialized = 'table'
+) }}
 
+-- Union green and yellow taxi data with consistent column names
 with green_tripdata as (
     select *,
         'Green' as service_type
@@ -15,16 +14,19 @@ yellow_tripdata as (
     from {{ ref('stg_external_table_yellow_taxi_data') }}
 ),
 
+-- Union all trips from both green and yellow taxi data
 trips_unioned as (
     select * from green_tripdata
     union all
     select * from yellow_tripdata
 ),
+-- Filter dim_zones to exclude 'Unknown' boroughs
 dim_zones as (
     select * from {{ ref('dim_zones') }}
     where borough != 'Unknown'
 )
 
+-- Select and join trips with dim_zones for pickup and dropoff locations
 select trips_unioned.tripid, 
     trips_unioned.vendorid, 
     trips_unioned.service_type,
@@ -51,6 +53,9 @@ select trips_unioned.tripid,
     trips_unioned.total_amount, 
     trips_unioned.payment_type, 
     trips_unioned.payment_type_description
-FROM trips_unioned
-inner join dim_zones as pickup_zone ON  trips_unioned.pulocationid = pickup_zone.locationid
-inner join dim_zones as dropoff_zone ON  trips_unioned.dropoff_locationid = dropoff_zone.locationid
+from trips_unioned
+inner join dim_zones as pickup_zone
+on trips_unioned.pickup_locationid = pickup_zone.locationid
+inner join dim_zones as dropoff_zone
+on trips_unioned.dropoff_locationid = dropoff_zone.locationid
+
