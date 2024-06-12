@@ -9,6 +9,7 @@ sources:
 
       # loaded_at_field: record_loaded_at
     tables:
+      - name: external_table_fhv_tripdata
       - name: external_table_green_taxi_data 
       - name: external_table_yellow_taxi_data 
          # freshness:
